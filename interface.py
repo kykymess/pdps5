@@ -18,7 +18,8 @@ class ConfigWin(Win):
     def __init__(self):
         """create the config window and pack the widgets"""
         global win  # existing grid window is stored as a global variable
-        if win: win.exit()  # exit previous grid window if it already exists
+        if win:
+            win.exit()  # exit previous grid window if it already exists
         Win.__init__(self, title='CONFIG_images', grow=False, fold=2, op=2)  # config window
         # --------------------------------------------------------------------------
         text = ('Number of rows :', 'Number of cols :')
