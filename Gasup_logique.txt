@@ -1,0 +1,71 @@
+# ==============================================================================
+__author__  = "Nator_Lulu"
+__version__ = "1.1" # 
+__date__    = "2017-11-17"
+# ==============================================================================
+from ezCLI import *
+from ezTK import *
+from random import choice
+# ------------------------------------------------------------------------------
+class ConfigGasup(object):
+    # ----------------------------------------------------------------------------
+def __init__(self,rows=7,cols=7):
+      #initialisation de la config pour self
+    self.reset(self,rows,cols)
+def reset(self,rows,cols)
+    #création d'un grille de taille défini par rows et cols 
+def conversionBin(self)
+##    conv = {
+##    '0' : '0000',
+##    '1' : '0001',
+##    '2' : '0010',
+##    '3' : '0011',
+##    '4' : '0100',
+##    '5' : '0101',
+##    '6' : '0110',
+##    '7' : '0111',
+##    '8' : '1000',
+##    '9' : '1001',
+##    'A' : '1010',
+##    'B' : '1011',
+##    'C' : '1100',
+##    'D' : '1101',
+##    'E' : '1110',
+##    'F' : '1111',
+##}
+## 
+##def hex2bin(d, nb = 0):
+##    return "".join([conv[ch] for ch in d]).zfill(nb)
+def conversionHex(self)
+##    conv = {
+##    '0000' : '0',
+##    '0001' : '1',
+##    '0010' : '2',
+##    '0011' : '3',
+##    '0100' : '4',
+##    '0101' : '5',
+##    '0110' : '6',
+##    '0111' : '7',
+##    '1000' : '8',
+##    '1001' : '9',
+##    '1010' : 'A',
+##    '1011' : 'B',
+##    '1100' : 'C',
+##    '1101' : 'D',
+##    '1110' : 'E',
+##    '1111' : 'F',
+##}
+## 
+##def bin2hex(d, nb = 0):
+##    return "".join([conv[ch] for ch in d]).zfill(nb)
+def connexion(self):
+    #détermination de connexion et de leurs directions
+def couleur(self):
+    #détermination du "R","B","G"
+def combinaison(self):
+    #crée un str à partir de couleur et aleaHex
+def gravity(self):
+    #si présence de "G" destruction des cases correspondantes et descentes des cases au dessus
+def comble(self):
+    #si présence de case vide les remplir
+def
