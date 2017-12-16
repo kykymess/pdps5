@@ -1,13 +1,13 @@
 # ==============================================================================
 """WIN : demo program for window manipulations"""
 # ==============================================================================
+from kernel import PipesGrid
+
 __author__ = "Nator_Lulu"
 __version__ = "1.1"  #
 __date__ = "2017-11-17"
 # ==============================================================================
-from ezCLI import *
 from ezTK import *
-from random import choice
 
 
 # ------------------------------------------------------------------------------
@@ -45,30 +45,35 @@ class GridWin(Win):
         rows, cols = win.rowscale(), win.colscale()  # get grid size from scales
         if win: win.exit()  # exit previous config window if it already exists
         #  self.gasup = ConfigGasup(rows,cols) ############### envoi les données de cols et rows au code logique
-        Win.__init__(self, title='GRID', fold=cols)  # grid window
+        Win.__init__(self, title='GRID', click=self.on_click)  # grid window
         # --------------------------------------------------------------------------
-
-        for ligne in range(rows):
-            for colonne in range(cols):
-                if colonne == 0:
-                    # win[ligne][colonne]=  "2"
-                    images = tuple(Image(file="images/B%s.png" % color) for color in "2")
-                    Button(self, height=64, width=64, image=images)
-                elif colonne == cols - 1:
-                    # win[ligne][colonne]=  "8"
-                    images = tuple(Image(file="images/B%s.png" % color) for color in "8")
-                    Button(self, height=64, width=64, image=images)
-                else:
-                    tuile_alea = choice(["3", "5", "6", "7", "9", "A", "B", "C", "D", "E"])
-                    # win[ligne][colonne]=  tuile_alea
-                    images = tuple(Image(file="images/R%s.png" % color) for color in tuile_alea)
-                    Button(self, height=64, width=64, image=images)
+        self.kernel = PipesGrid(rows, cols)
+        self.board = Frame(self, fold=cols, border=1, relief='solid')
+        images = tuple(Image(file='images/{}{}.png'.format(l, n)) for l in 'RGB' for n in '0123456789ABCDEF')
+        for row in range(rows):
+            for col in range(cols):
+                button = Button(self.board, height=64, width=64, image=images)
+                self.updateCell(button)
         # --------------------------------------------------------------------------
         # for loop in range(rows*cols): Label(self, height=64, width=64, image = images)
         Button(self, text='Nouvelle grille', command=ConfigWin)
         # --------------------------------------------------------------------------
         win = self
         self.loop()
+
+    def updateCell(self, widget):
+        n = self.kernel.getPipeNumber(*widget.index)
+        widget(n)
+
+    # ----------------------------------------------------------------------------
+
+    def on_click(self, widget, code, mods):
+        """callback function for all 'mouse click' events"""
+        if widget.master != self.board or widget.index is None:
+            return  # nothing to do if the widget is not a board cell
+        changed = self.kernel.makeRotation(widget.index[0], widget.index[1], 'r')
+        for r, c in changed:
+            self.updateCell(self.board[r][c])
 
 
 # ==============================================================================

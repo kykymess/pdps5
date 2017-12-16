@@ -100,7 +100,7 @@ class Win(Frame):
                key=None, click=None, move=None, inout=None, **keys):
     props = dict(grow=True, fold=fold, flow='ES' if fold else 'SE',
       border=0, relief='solid', anchor='C', op=0, ip=0, takefocus=True,
-      bg='SystemButtonFace', fg='SystemButtonText', font='Arial 12',
+      bg='white', fg='grey', font='Arial 12',
       key=None, click=None, inout=None, move=None); props.update(keys)
     # create either a master window (Tk) or a slave window (Toplevel)
     master = tk.Toplevel(master.master) if master else tk.Tk()
