@@ -9,6 +9,8 @@ class PipesGrid(object):
     """grid containing pipes"""
 
     def __init__(self, rows: int, cols: int):
+        self.count = 0
+        self.score = 0
         assert type(rows) == type(cols) == int and rows > 0 and cols > 0
         self.score = 0
         self.rows, self.cols = rows, cols
@@ -59,15 +61,20 @@ class PipesGrid(object):
 
         return connected
 
-    def collapse(self) -> None:
-        for row in (0, self.rows):  # We procee row per row
-            for col in (1, self.cols - 1):  # Then for each col
-                print(row, col)
+    def collapse(self):
+        """The first yield resets every border pipe to blue. Every other is a change in one pipe"""
+        for col in (0, self.cols - 1):
+            for row in range(self.rows):
+                self.grid[row][col][0] = 'B'
+        for col in range(1, self.cols - 1):  # We proceed row per row
+            for row in range(0, self.rows):  # Then for each col
                 if self.grid[row][col][0] == 'G':  # if we find green
                     for i in range(0, row):  # we then go up
-                        self.grid[row - i][col] = self.grid[row - i - 1][col].copy()
+                        self.grid[row - i][col] = ['R', self.grid[row - i - 1][col][1]]
+                        yield (row - i, col, False)
                     # we are now at row - (row - 1). We didn't do 0
                     self.grid[0][col] = ['R', self.getRandomPipe()]
+                    yield (0, col, True)
 
     def makeRotation(self, row: int, col: int, dir: str) -> list:
         assert self.isInGrid(row, col) and dir in ('r', 'l')
@@ -91,6 +98,8 @@ class PipesGrid(object):
         if 0 in columns and (self.cols - 1) in columns:
             pipe_color = 'G'
         for r, c in connected:
+            if pipe_color == 'G':
+                self.score += 1
             self.grid[r][c][0] = pipe_color
 
     def isConnected(self, b1: int, b2: int, d: int) -> bool:
@@ -179,3 +188,8 @@ class PipesGrid(object):
             #     liste = [(dic[key], key) for key in dic.keys()]
             #     liste.sort()
             #     return liste
+
+    def times_up(self):
+        self.count -= 1
+        if self.count == 0:
+            print("Woops ! You lost The Game.")
