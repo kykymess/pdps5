@@ -60,11 +60,11 @@ class PipesGrid(object):
         return connected
 
     def collapse(self) -> None:
-        for col in range(2, self.cols - 1):
+        for col in range(1, self.cols - 1):
             for row in range(self.rows):
                 if self.grid[row][col][0] == "G":
                     for i in range(row, 1, -1):
-                        self.grid[row][col] = self.grid[row + 1][col]
+                        self.grid[row][col] = self.grid[row - 1][col]
                     self.grid[0][col] = ['R', self.getRandomPipe()]
                     self.score += score_unit
 
@@ -73,13 +73,13 @@ class PipesGrid(object):
         if col in (0, self.cols - 1):
             return []
         self.grid[row][col][1] = self.rotate(self.getPipe(row, col), dir)
-        everything = []
+        changed = []
         for dr, dc in [(0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)]:
             if self.isInGrid(row + dr, col + dc):
                 connected = self.getAllConnected(row + dr, col + dc)
                 self.colorConnected(connected)
-                everything += connected
-        return everything
+                changed += connected
+        return changed
 
     def colorConnected(self, connected: list((int, int))) -> None:
         """Colors all the given connected pipes"""
@@ -144,3 +144,36 @@ class PipesGrid(object):
             return choice((7, 11, 13, 14))
         if nb_bites == 4:
             return 15
+
+
+   # # ------------------------------------------------------------------------------
+  #  def init_ini(file='meilleurs_scores.ini'):  # creates file if needed
+  #      """create a .ini files for high-score with ezcli fonction """
+  #      try:
+   #         read_ini(file)
+   #     except:
+   #         d = {}
+   #         for area in set([i * j for i in range(5, 20) for j in range(5, 20)]):
+   #             d[area] = {}
+   #             for i in range(1, 11):
+   #                 d[area]['noone %s' % (i)] = 10000
+   #         write_ini(file, d)
+   #
+   # # ------------------------------------------------------------------------------
+   # def write(area, nick, score, file='meilleurs_scores.ini'):  # write user nameand his score if player do a high-score
+   #     """write a .ini files for high-score with ezcli fonction """
+    #    dernier_score = get(area, file)[-1]  # gets the last element of the best scores
+   #     if dernier_score[0] >= score and not nick in [elem[1] for elem in get(area)]:
+   #         dic = read_ini(file)
+   #         dic[str(area)].pop(dernier_score[1])
+   #         dic[str(area)][str(nick)] = score
+   #         write_ini(file, dic)
+   #         return true
+   #     return false
+   #
+   # # ------------------------------------------------------------------------------
+   # def get(area, file='meilleurs_scores.ini'):  # import of high-score for area chosen
+  #      dic = read_ini(file)[str(area)]
+   #     liste = [(dic[key], key) for key in dic.keys()]
+   #     liste.sort()
+   #     return liste
