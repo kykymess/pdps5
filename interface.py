@@ -8,6 +8,7 @@ __version__ = "1.1"  #
 __date__ = "2017-11-17"
 # ==============================================================================
 from ezTK import *
+from score import ScoreSaver
 
 
 # ------------------------------------------------------------------------------
@@ -45,6 +46,7 @@ class GridWin(Win):
         """create the grid window and pack the widgets"""
         global win  # existing config window is stored as a global variable
         rows, cols, count = win.rowscale(), win.colscale(), win.countscale()  # get grid size from scales
+        self.params = (rows, cols, count)
         if win: win.exit()  # exit previous config window if it already exists
         #  self.gasup = ConfigGasup(rows,cols) ############### envoi les données de cols et rows au code logique
         Win.__init__(self, title='GRID', click=self.on_click)  # grid window
@@ -108,12 +110,12 @@ class GridWin(Win):
             self.show_collapse(iterator)
 
     def show_collapse(self, iterator):
-        try :
+        try:
             r, c, score = next(iterator)
             if score:
-                self.score_var.set(str(int(self.score_var.get()) + 1))
+                self.score_var.set(str(int(self.score_var.get()) + 100))
             self.updateCell(self.board[r][c])
-            self.after(10, lambda x=iterator : self.show_collapse(x))
+            self.after(10, lambda x=iterator: self.show_collapse(x))
         except StopIteration:
             for col in (0, self.kernel.cols - 1):
                 for row in range(self.kernel.rows):
@@ -121,32 +123,58 @@ class GridWin(Win):
             for col in range(self.kernel.cols):
                 for row in range(self.kernel.rows):
                     self.updateCell(self.board[row][col])
-            self.score_var.set(str(int(self.score_var.get()) + 1))
+            self.score_var.set(str(self.kernel.score))
             self.animating = False
 
     def timeIsRunningOut(self):
         """Ghosts keeping me alive ..."""
         self.kernel.times_up()
         self.time_var.set(str(self.kernel.count))
-        self.after(1000, self.timeIsRunningOut)
+        if self.kernel.count > 0:
+            self.after(1000, self.timeIsRunningOut)
+        else:
+            EndScoreWin(self.kernel.score, *self.params)
 
-class EndScoreWin(Win)
 
-    def __init__(self):
+class EndScoreWin(Win):
+    def __init__(self, score, rows, cols, count):
         """create the config window and pack the widgets"""
+        self.score, self.rows, self.cols, self.count = score, rows, cols, count
         global win  # existing grid window is stored as a global variable
-        if win:
-            win.exit()  # exit previous grid window if it already exists
-        Win.__init__(self, title='Sauvegarde_Score', grow=False, fold=2, op=2)  # config window
+        if win: win.exit()  # exit previous grid window if it already exists
+        Win.__init__(self, title='Sauvegarde_Score', grow=True, fold=1, op=2)  # config window
+        # ---
+        self.saver = ScoreSaver()
         # --------------------------------------------------------------------------
-        texts = ('You played with a board of {} rows and {} cols and a time of {} seconds.')
-        Label(self, text=texts, grow=False, width=13, anchor='SW', relief='flat')
-
-        Button(self, text='Nouvelle grille', command=ConfigWin)
+        texts = "You played with a board of {} rows and {} cols and a time of {} seconds.".format(rows, cols, count)
+        Label(self, text=texts, grow=False, anchor='SW', relief='flat')
         # --------------------------------------------------------------------------
-        self.rowscale, self.colscale, self.countscale = self[0][1], self[1][1], self[2][1]
+        Label(self, text="Your score : {0:.2f}".format(self.score / self.count), grow=True, fg='black')
+        # --------------------------------------------------------------------------
+        best_scores = self.saver.get(rows * cols)
+        scores_frame = Frame(self, fold=len(best_scores), flow="SE", grow=True)
+        for score, name in best_scores:
+            Label(scores_frame, grow=True, text=name)
+        for score, names in best_scores:
+            Label(scores_frame, grow=True, text="{0:.2f}".format(score))
+        # --------------------------------------------------------------------------
+        save_score = Frame(self, grow=True, fold=1)
+        # --
+        self.entry = Entry(save_score, grow=True, text="Nameless")
+        self.button = Button(save_score, grow=True, text="Press to save", command=self.save_score)
+        # --------------------------------------------------------------------------
+        Button(self, text='New grid', command=ConfigWin)
+        # --------------------------------------------------------------------------
         win = self
         self.loop()
+
+    def save_score(self):
+        name = self.entry.get()
+        battu = self.saver.write(self.rows * self.cols, name, self.score / self.count)
+        if battu:
+            self.button['text'] = "Congratulation ! Welcome to Top 10 !"
+
+
 
 # ==============================================================================
 if __name__ == "__main__":  # testcode for class 'DemoWin'

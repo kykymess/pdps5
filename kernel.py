@@ -99,7 +99,7 @@ class PipesGrid(object):
             pipe_color = 'G'
         for r, c in connected:
             if pipe_color == 'G':
-                self.score += 1
+                self.score += 100
             self.grid[r][c][0] = pipe_color
 
     def isConnected(self, b1: int, b2: int, d: int) -> bool:

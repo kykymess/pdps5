@@ -9,7 +9,7 @@ class ScoreSaver(object):
             for area in set([i * j for i in range(5, 20) for j in range(5, 20)]):
                 D[area] = {}
                 for i in range(1, 11):
-                    D[area]['No one %s' % (i)] = 1
+                    D[area]['No one %s' % (i)] = -0.1
             write_ini(file, D)
 
     # ------------------------------------------------------------------------------
