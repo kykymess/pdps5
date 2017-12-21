@@ -130,6 +130,23 @@ class GridWin(Win):
         self.time_var.set(str(self.kernel.count))
         self.after(1000, self.timeIsRunningOut)
 
+class EndScoreWin(Win)
+
+    def __init__(self):
+        """create the config window and pack the widgets"""
+        global win  # existing grid window is stored as a global variable
+        if win:
+            win.exit()  # exit previous grid window if it already exists
+        Win.__init__(self, title='Sauvegarde_Score', grow=False, fold=2, op=2)  # config window
+        # --------------------------------------------------------------------------
+        texts = ('You played with a board of {} rows and {} cols and a time of {} seconds.')
+        Label(self, text=texts, grow=False, width=13, anchor='SW', relief='flat')
+
+        Button(self, text='Nouvelle grille', command=ConfigWin)
+        # --------------------------------------------------------------------------
+        self.rowscale, self.colscale, self.countscale = self[0][1], self[1][1], self[2][1]
+        win = self
+        self.loop()
 
 # ==============================================================================
 if __name__ == "__main__":  # testcode for class 'DemoWin'
